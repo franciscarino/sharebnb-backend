@@ -1,0 +1,23 @@
+- ~~home page reroute to listings w/out descriptions~~
+    ~~-clicking on a listing will show the details~~
+- ~~~authentication (signup login) ~~~
+    -  ~~~once logged in (hide signup and login button) ~~~
+      -  ~~~(add logout button) ~~~
+    -  ~~~not logged in (hide listing)~~~
+- ~~build relationship in db for users and listings~~
+    - ~~make the exisiting user whoever is logged-in~~
+-  add more to the description with details of the private outdoor space
+-  ~~add owner to description details~~
+-  change auth to jwt
+- ~~add delete button to listing~~
+- uuid for aws to ensure a unique file name. (same file name)
+- fix spacing error when uploading images
+-  refactor logic with AWS
+-  create helper functions
+-  ~~eliminate import error~~
+-  add testing
+- add book button with calendar of dates?
+- edit form
+- listing filters
+- messages
+

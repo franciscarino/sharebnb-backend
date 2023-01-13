@@ -1,0 +1,269 @@
+.listing-card {
+  width: 400px;
+  margin-bottom: 1rem;
+  height: 440px
+}
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-link:hover {
+  text-decoration: none;
+  color: #FF5A5F;
+}
+
+.card-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+}
+
+.listing-detail {
+  width: 50%;
+}
+
+.listing-detail-container {
+  display: flex;
+  justify-content: center;
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-img-top {
+  max-height: 250px;
+  min-height: 250px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.card-img-top-listing-detail {
+  /* max-height: 250px;
+  min-height: 250px; */
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.bi-search {
+  color: #FF5A5F;
+}
+
+.btn-primary {
+  background-color: #FF5A5F;
+}
+
+.btn-link {
+  color: #FF5A5F;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.btn-link:hover {
+  color: #FF5A5F;
+  text-decoration: underline;
+}
+
+.form-control {
+  margin-bottom: 1rem;
+}
+
+.created-by-user {
+  color: #FF5A5F;
+}
+
+.created-by-user:hover {
+  color: #FF5A5F;
+}
+
+
+/* ======================= Nav */
+
+.navbar {
+  background-color: #ffffff;
+  height: 70px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  margin-bottom: 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+
+}
+
+
+
+.navbar a {
+  color: #FF5A5F;
+  font-size: 16px;
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  color: #FF5A5F;
+  text-decoration: underline;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+
+}
+
+#brand-name {
+  font-size: 28px;
+  /* font-weight: bold; */
+}
+
+
+
+.navbar-brand>img {
+  display: inline-block;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  margin-right: 5px;
+  margin-left: 90px;
+  width: 40px;
+  border-radius: 2px;
+
+}
+
+.nav>li>a>img {
+  width: 32px;
+  border-radius: 32px;
+}
+
+ul.nav.navbar-nav {
+  align-items: center;
+  margin-right: 120px;
+}
+
+ul.nav.navbar-nav li {
+  margin: 0 0.5rem;
+  display: flex;
+}
+
+nav form.navbar-form {
+  display: flex;
+  position: relative;
+}
+
+#search.form-control {
+  border-radius: 20px;
+  margin-bottom: 0;
+  width: 100%;
+  font-size: 13px;
+  padding-right: 28px;
+  box-sizing: border-box;
+}
+
+#search.form-control+.btn {
+  position: absolute;
+  right: 9px;
+  top: 2px;
+  bottom: 4px;
+  z-index: 1;
+  padding: 0;
+  color: #66757f;
+}
+
+#search.form-control+.btn:active,
+#search.form-control+.btn:focus {
+  box-shadow: none;
+}
+
+#search:active,
+#search:focus {
+  box-shadow: none;
+  border: 1px solid #FF5A5F;
+}
+
+/* on "onboarding" pages (signup & login), the navbar is
+   different: no search box, the logo is centered, and it has
+   a background color.
+ */
+
+.onboarding>.navbar {
+  background-image: url("/static/images/nav-bg.png");
+  background-size: 100% 100%;
+}
+
+.onboarding .navbar-header {
+  margin: 0 auto;
+}
+
+.onboarding .navbar-brand {
+  margin: 0;
+}
+
+.onboarding .navbar-brand span {
+  display: none;
+}
+
+.onboarding .nav.navbar-nav.navbar-right {
+  position: absolute;
+  right: px;
+}
+
+.onboarding>.navbar a {
+  color: #fff;
+}
+
+.onboarding>.navbar form.navbar-form {
+  display: none;
+}
+
+.onboarding {
+  background-color: #fff;
+}
+
+@media (max-width: 468px) {
+  nav form.navbar-form {
+    display: none;
+  }
+}
+
+nav+.container {
+  margin-bottom: 1rem;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  margin-top: 100px;
+}
+
+#listing-btn,
+#login-btn,
+#signup-btn,
+#reserve-btn,
+#delete-btn {
+  color: #fff;
+  background-color: #FF5A5F;
+  border-color: #FF5A5F;
+}
+
+#listing-btn:hover,
+#login-btn:hover,
+#signup-btn:hover,
+#reserve-btn:hover,
+#delete-btn:hover {
+  color: #fff;
+  background-color: #f9383f;
+  border-color: #f9383f;
+}
+
+#logout-btn:hover {
+  color: #f9383f;
+}
+
+#brand-name:hover {
+  font-size: 28px;
+  text-decoration: none;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
