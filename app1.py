@@ -1,3 +1,7 @@
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import create_access_token
 from sqlalchemy import or_
 import os
 from dotenv import load_dotenv
@@ -5,7 +9,7 @@ from forms import ListingAddForm, UserAddForm, CSRFProtection, LoginForm
 from sqlalchemy.exc import IntegrityError
 
 from flask import (
-    Flask, render_template, request, flash, redirect, session, g
+    Flask, render_template, request, flash, redirect, session, g, jsonify
 )
 
 from models import (
@@ -14,6 +18,7 @@ from models import (
 load_dotenv()
 
 CURR_USER_KEY = "curr_user"
+
 
 # database_url = os.environ['DATABASE_URL']
 # database_url = database_url.replace('postgres://', 'postgresql://')
@@ -35,120 +40,97 @@ connect_db(app)
 ##############################################################################
 # User signup/login/logout
 
-@app.before_request
-def add_user_to_g():
-    """If we're logged in, add curr user to Flask global."""
+# @app.before_request
+# def add_user_to_g():
+#     """If we're logged in, add curr user to Flask global."""
 
-    if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+#     if CURR_USER_KEY in session:
+#         g.user = User.query.get(session[CURR_USER_KEY])
 
-    else:
-        g.user = None
-
-
-@app.before_request
-def add_csrf_only_form():
-    """Add a CSRF-only form so that every route can use it."""
-
-    g.csrf_form = CSRFProtection()
+#     else:
+#         g.user = None
 
 
-def do_login(user):
-    """Log in user."""
+# @app.before_request
+# def add_csrf_only_form():
+#     """Add a CSRF-only form so that every route can use it."""
 
-    session[CURR_USER_KEY] = user.username
-
-
-def do_logout():
-    """Log out user."""
-
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
+#     g.csrf_form = CSRFProtection()
 
 
-@app.route('/signup', methods=["GET", "POST"])
+# def do_login(user):
+#     """Log in user."""
+
+#     session[CURR_USER_KEY] = user.username
+
+
+# def do_logout():
+#     """Log out user."""
+
+#     if CURR_USER_KEY in session:
+#         del session[CURR_USER_KEY]
+
+
+@app.route('/api/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup.
 
-    Create new user and add to DB. Redirect to home page.
-
-    If form not valid, present form.
-
-    If the there already is a user with that username: flash message
-    and re-present form.
+    Create new user and add to DB.
     """
 
-    if g.user:
-        return redirect("/")
+    data = request.json
 
-    if CURR_USER_KEY in session:
-        del session[CURR_USER_KEY]
-    form = UserAddForm()
+    user = User.signup(
+        username=data.get("username"),
+        password=data.get("password"),
+        email=data.get("email"),
+        bio=data.get("bio")
+    )
 
-    if form.validate_on_submit():
-        try:
-            user = User.signup(
-                username=form.username.data,
-                password=form.password.data,
-                email=form.email.data,
-                bio=form.bio.data
-            )
-            db.session.commit()
+    db.session.add(user)
+    db.session.commit()
 
-        except IntegrityError:
-            flash("Username already taken", 'danger')
-            return render_template('user_signup.html', form=form)
+    access_token = create_access_token(identity=user.username)
 
-        do_login(user)
-        return redirect("/")
-
-    else:
-        return render_template('/user_signup.html', form=form)
+    return jsonify(token=access_token), 201
 
 
-@app.route('/login', methods=["GET", "POST"])
+@app.route('/api/login', methods=["POST"])
 def login():
-    """Handle user login and redirect to homepage on success."""
+    """Handle user login and return token."""
 
-    if g.user:
-        return redirect("/")
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    user = User.authenticate(username, password)
 
-    form = LoginForm()
+    if not user:
+        return jsonify({"Error": "invalid credentials"}), 400
 
-    if form.validate_on_submit():
-        user = User.authenticate(
-            form.username.data,
-            form.password.data)
+    access_token = create_access_token(identity=username)
 
-        if user:
-            do_login(user)
-            return redirect("/")
-
-        flash("Invalid credentials.", 'danger')
-
-    return render_template('/login-form.html', form=form)
+    return jsonify(token=access_token)
 
 
-@app.post('/logout')
-def logout():
-    """Handle logout of user and redirect to homepage."""
+# @app.post('/api/logout')
+# def logout():
+#     """Handle logout of user and redirect to homepage."""
 
-    form = g.csrf_form
+#     form = g.csrf_form
 
-    if not form.validate_on_submit() or not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+#     if not form.validate_on_submit() or not g.user:
+#         flash("Access unauthorized.", "danger")
+#         return redirect("/")
 
-    do_logout()
+#     do_logout()
 
-    flash("You have successfully logged out.", 'success')
-    return redirect("/login")
+#     flash("You have successfully logged out.", 'success')
+#     return redirect("/login")
 
 ##############################################################################
 # Standard restful routes for listings:
 
 
-@app.get('/listings')
+@app.get('/api/listings')
 def list_listings():
     """Page with listing of listings."""
 
@@ -167,7 +149,7 @@ def list_listings():
     return render_template('listings.html', listings=listings)
 
 
-@app.get('/listings/<int:listing_id>')
+@app.get('/api/listings/<int:listing_id>')
 def show_listing(listing_id):
     """Show listing details."""
 
@@ -176,7 +158,7 @@ def show_listing(listing_id):
     return render_template('listing-details.html', listing=listing)
 
 
-@app.post('/listings/<int:listing_id>/delete')
+@app.post('/api/listings/<int:listing_id>/delete')
 def delete_listing(listing_id):
     """Delete listing."""
 
@@ -195,7 +177,7 @@ def delete_listing(listing_id):
     return redirect("/listings")
 
 
-@app.post('/listings/<int:listing_id>/reserve')
+@app.post('/api/listings/<int:listing_id>/reserve')
 def reserve_listing(listing_id):
     """Reserve a listing."""
 
@@ -216,7 +198,7 @@ def reserve_listing(listing_id):
     return redirect(f"/listings/{listing_id}")
 
 
-@app.route('/listings/add', methods=["GET", "POST"])
+@app.route('/api/listings/add', methods=["GET", "POST"])
 def add_listings():
     """add a listing to listings."""
     if not g.user:
@@ -242,7 +224,7 @@ def add_listings():
 # General user routes:
 
 
-@app.get('/users/<username>')
+@app.get('/api/users/<username>')
 def user_profile(username):
     """Page with listing of properties rented by logged-in user."""
 
@@ -256,7 +238,7 @@ def user_profile(username):
     return render_template('/user-page.html', user=user, listings=listings)
 
 
-@app.get('/users/<username>/reservations')
+@app.get('/api/users/<username>/reservations')
 def user_reservations(username):
     """Page with listing of properties rented by logged-in user."""
 
@@ -281,11 +263,11 @@ def user_reservations(username):
 def homepage():
     """ show listings page."""
 
-    return redirect("/listings")
+    return redirect("/api/listings")
 
 
 @app.errorhandler(404)
 def page_not_found(e):
     """404 NOT FOUND page."""
 
-    return render_template('404.html'), 404
+    return jsonify({"error": "Page not found."}), 404
