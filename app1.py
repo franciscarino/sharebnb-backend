@@ -149,13 +149,23 @@ def list_listings():
     return render_template('listings.html', listings=listings)
 
 
+# @app.get('/api/listings/<int:listing_id>')
+# def show_listing(listing_id):
+#     """Show listing details."""
+
+#     listing = Listing.query.get_or_404(listing_id)
+
+#     return render_template('listing-details.html', listing=listing)
+
+
 @app.get('/api/listings/<int:listing_id>')
 def show_listing(listing_id):
     """Show listing details."""
 
     listing = Listing.query.get_or_404(listing_id)
+    serialized = Listing.serialize(listing)
 
-    return render_template('listing-details.html', listing=listing)
+    return jsonify(listing=serialized)
 
 
 @app.post('/api/listings/<int:listing_id>/delete')
