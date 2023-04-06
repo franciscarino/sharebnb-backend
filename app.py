@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from models import (
     db, connect_db, User, Listing)
 
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import (create_access_token, jwt_required)
 
 load_dotenv()
 
@@ -81,3 +81,14 @@ def login():
     access_token = create_access_token(identity=username)
 
     return jsonify(token=access_token)
+
+
+@app.route('/api/users/<username>', methods=["GET"])
+@jwt_required()
+def get_user(username):
+    """Return user object as json."""
+
+    user = User.query.filter_by(username=username).one()
+    serialized = User.serialize(user)
+
+    return jsonify(user=serialized)

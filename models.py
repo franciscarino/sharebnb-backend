@@ -94,6 +94,15 @@ class User(db.Model):
 
         return False
 
+    def serialize(self):
+        """Serialize user to a dictionary of user info."""
+
+        return {
+            "username": self.username,
+            "email": self.email,
+            "bio": self.bio,
+        }
+
 
 class Listing(db.Model):
     """Listing in the system."""
