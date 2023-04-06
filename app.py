@@ -11,6 +11,8 @@ from sqlalchemy.exc import IntegrityError
 from models import (
     db, connect_db, User, Listing)
 
+from flask_jwt_extended import create_access_token
+
 load_dotenv()
 
 CURR_USER_KEY = "curr_user"
@@ -48,3 +50,34 @@ def signup():
 
     Create new user and add to DB.
     """
+
+    data = request.json
+
+    user = User.signup(
+        username=data.get("username"),
+        password=data.get("password"),
+        email=data.get("email"),
+        bio=data.get("bio")
+    )
+
+    db.session.commit()
+
+    access_token = create_access_token(identity=user.username)
+
+    return jsonify(token=access_token), 201
+
+
+@app.route('/api/login', methods=["POST"])
+def login():
+    """Handle user login and return token."""
+
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    user = User.authenticate(username, password)
+
+    if not user:
+        return jsonify({"error": "invalid credentials"}), 400
+
+    access_token = create_access_token(identity=username)
+
+    return jsonify(token=access_token)
