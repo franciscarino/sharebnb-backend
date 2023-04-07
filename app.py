@@ -93,3 +93,17 @@ def get_user(username):
     serialized = User.serialize(user)
 
     return jsonify(user=serialized)
+
+
+@app.route('/api/users/<username>/reservations', methods=["GET"])
+@jwt_required()
+def get_user_reservations(username):
+    """Returns a user's reservations as JSON"""
+
+    # user = User.query.filter_by(username=username).one()
+
+    reservations = Listing.query.filter_by(rented_by=username)
+
+    serialized = [{"user": r[2],
+                   "listingId": r[3]}
+                  for r in reservations]
