@@ -11,7 +11,8 @@ from sqlalchemy.exc import IntegrityError
 from models import (
     db, connect_db, User, Listing)
 
-from flask_jwt_extended import (create_access_token, jwt_required)
+from flask_jwt_extended import (
+    create_access_token, jwt_required, jwt_required, JWTManager)
 
 load_dotenv()
 
@@ -36,7 +37,7 @@ app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
-# TODO: jwt = JWTManager(app)
+jwt = JWTManager(app)
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
