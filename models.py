@@ -190,6 +190,20 @@ class Listing(db.Model):
         db.session.add(new_listing)
         return new_listing
 
+    def serialize(self):
+        """Serialize listing to a dict of listing info."""
+
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "location": self.location,
+            "photo_url": self.photo_url,
+            "price": self.price,
+            "created_by": self.created_by,
+            "rented_by": self.rented_by,
+        }
+
 
 def connect_db(app):
     """Connect this database to provided Flask app."""
