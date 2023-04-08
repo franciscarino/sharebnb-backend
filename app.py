@@ -146,7 +146,7 @@ def show_listing(listing_id):
 
 @app.post('/api/listings')
 @jwt_required()
-def create_listings():
+def create_listing():
     """Add a listing and returns listing details as JSON."""
 
     username = get_jwt_identity()
@@ -156,4 +156,19 @@ def create_listings():
     description = request.form.get('description')
     location = request.form.get('location')
     price = request.form.get('price')
-    # photo_url =
+    file = request.files['photo_url']
+
+    data = {
+        "title": title,
+        "description": description,
+        "location": location,
+        "price": price,
+        "created_by": user,
+    }
+
+    listing = Listing.create(data, file, username)
+    db.session.commit()
+
+    serialized = Listing.serialize(listing)
+
+    return jsonify(listing=serialized), 201
