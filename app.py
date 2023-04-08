@@ -6,13 +6,13 @@ from flask import (Flask, request, jsonify)
 
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
-from sqlalchemy.exc import IntegrityError
+# from sqlalchemy.exc import IntegrityError
 
 from models import (
     db, connect_db, User, Listing)
 
 from flask_jwt_extended import (
-    create_access_token, jwt_required, jwt_required, JWTManager)
+    create_access_token, jwt_required, get_jwt_identity, JWTManager)
 
 load_dotenv()
 
@@ -85,7 +85,7 @@ def login():
 
 
 @app.route('/api/users/<username>', methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_user(username):
     """Return user object as json."""
 
@@ -96,7 +96,7 @@ def get_user(username):
 
 
 @app.route('/api/users/<username>/reservations', methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_user_reservations(username):
     """Returns a user's reservations as JSON"""
 
@@ -115,7 +115,7 @@ def get_user_reservations(username):
 
 @app.get('/api/listings')
 def get_listings():
-    """Page with listing of listings."""
+    """Return all listings as JSON"""
 
     search = request.args.get('q')
 
@@ -132,3 +132,28 @@ def get_listings():
     serialized = [Listing.serialize(listing) for listing in listings]
 
     return jsonify(listings=serialized)
+
+
+@app.get('/api/listings/<int:listing_id>')
+def show_listing(listing_id):
+    """Return listing as JSON"""
+
+    listing = Listing.query.filter_by(id=listing_id).one()
+    serialized = Listing.serialize(listing)
+
+    return jsonify(listing=serialized)
+
+
+@app.post('/api/listings')
+@jwt_required()
+def create_listings():
+    """Add a listing and returns listing details as JSON."""
+
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).one()
+
+    title = request.form.get('title')
+    description = request.form.get('description')
+    location = request.form.get('location')
+    price = request.form.get('price')
+    # photo_url =
