@@ -108,3 +108,27 @@ def get_user_reservations(username):
                   for r in reservations]
 
     return jsonify(reservations=serialized)
+
+
+##############################################################################
+# Listings routes:
+
+@app.get('/api/listings')
+def get_listings():
+    """Page with listing of listings."""
+
+    search = request.args.get('q')
+
+    listings = Listing.query.all()
+
+    if not search:
+        listings = Listing.query.all()
+    else:
+        listings = Listing.query.filter(or_(Listing.location.ilike(f"%{search}%"),
+                                            Listing.title.ilike(f"%{search}%"),
+                                            Listing.description.ilike(f"%{search}%"))
+                                        ).all()
+
+    serialized = [Listing.serialize(listing) for listing in listings]
+
+    return jsonify(listings=serialized)
