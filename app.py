@@ -85,7 +85,7 @@ def login():
 
 
 @app.route('/api/users/<username>', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user(username):
     """Return user object as json."""
 
@@ -96,14 +96,15 @@ def get_user(username):
 
 
 @app.route('/api/users/<username>/reservations', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user_reservations(username):
     """Returns a user's reservations as JSON"""
 
-    # user = User.query.filter_by(username=username).one()
+    reservations = Listing.query.with_entities(
+        Listing.title, Listing.id).filter_by(rented_by=username)
 
-    reservations = Listing.query.filter_by(rented_by=username)
-
-    serialized = [{"user": r[2],
-                   "listingId": r[3]}
+    serialized = [{"username": username,
+                   "listingId": r.id}
                   for r in reservations]
+
+    return jsonify(reservations=serialized)
