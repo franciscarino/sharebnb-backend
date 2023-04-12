@@ -173,3 +173,20 @@ def create_listing():
     serialized = Listing.serialize(listing)
 
     return jsonify(listing=serialized), 201
+
+
+@app.post('/api/listings/<int:listing_id>/reserve')
+@jwt_required
+def reserve_listing(listing_id):
+    """Reserve a listing"""
+
+    username = get_jwt_identity()
+    user = User.query.filter_by(username=username).one()
+    listing = Listing.filter_by(listing_id).one()
+
+    listing.rented_by = user
+    db.session.commit()
+
+    serialized = Listing.serialize(listing)
+
+    return jsonify(reservation=serialized), 201
