@@ -85,7 +85,7 @@ def login():
 
 
 @app.route('/api/users/<username>', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user(username):
     """Return user object as json."""
 
@@ -96,7 +96,7 @@ def get_user(username):
 
 
 @app.route('/api/users/<username>/reservations', methods=["GET"])
-@jwt_required()
+# @jwt_required()
 def get_user_reservations(username):
     """Returns a user's reservations as JSON"""
 
@@ -135,7 +135,7 @@ def get_listings():
 
 
 @app.get('/api/listings/<int:listing_id>')
-def show_listing(listing_id):
+def get_listing(listing_id):
     """Return listing as JSON"""
 
     listing = Listing.query.filter_by(id=listing_id).one()
@@ -144,7 +144,8 @@ def show_listing(listing_id):
     return jsonify(listing=serialized)
 
 
-@app.post('/api/listings')
+# TODO: Test route
+@app.post('/api/listings/add')
 @jwt_required()
 def create_listing():
     """Add a listing and returns listing details as JSON."""
