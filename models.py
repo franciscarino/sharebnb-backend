@@ -188,6 +188,7 @@ class Listing(db.Model):
         )
 
         db.session.add(new_listing)
+        print("NEW LISTING ADDED")
         return new_listing
 
     def serialize(self):
