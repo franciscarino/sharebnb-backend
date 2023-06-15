@@ -190,3 +190,13 @@ def reserve_listing(listing_id):
     serialized = Listing.serialize(listing)
 
     return jsonify(reservation=serialized), 201
+
+
+##############################################################################
+# Homepage and error pages
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """404 NOT FOUND page."""
+
+    return jsonify({"error": "Page not found."}), 404
