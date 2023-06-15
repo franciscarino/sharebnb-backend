@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 from flask import (Flask, request, jsonify)
 
-from flask_debugtoolbar import DebugToolbarExtension
+# from flask_debugtoolbar import DebugToolbarExtension
 from flask_cors import CORS
 # from sqlalchemy.exc import IntegrityError
 
@@ -34,7 +34,7 @@ app.config['AWS_ACCESS_KEY'] = os.environ['AWS_ACCESS_KEY']
 app.config['AWS_SECRET_ACCESS_KEY'] = os.environ['AWS_SECRET_ACCESS_KEY']
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False
 
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
 jwt = JWTManager(app)
@@ -154,18 +154,25 @@ def create_listing():
     user = User.query.filter_by(username=username).one()
 
     title = request.form.get('title')
+    print("title: ", title)
     description = request.form.get('description')
+    print("description: ", description)
     location = request.form.get('location')
+    print("location: ", location)
     price = request.form.get('price')
+    print("price: ", price)
     file = request.files['photo_url']
+    print("file: ", file)    
 
     data = {
         "title": title,
         "description": description,
         "location": location,
         "price": price,
-        "created_by": user,
+        "created_by": user.username,
     }
+    
+    print("DATA: ", data)
 
     listing = Listing.create(data, file, username)
     db.session.commit()
