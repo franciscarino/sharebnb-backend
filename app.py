@@ -153,19 +153,12 @@ def create_listing():
     username = get_jwt_identity()
     user = User.query.filter_by(username=username).one()
 
-    # title = request.form.get('title')
     title = request.json["title"]
-    print("title: ", title)
-    # description = request.form.get('description')
     description = request.json["description"]
-    print("description: ", description)
-    # location = request.form.get('location')
     location = request.json["location"]
-    print("location: ", location)
-    # price = request.form.get('price')
     price = request.json["price"]
-    print("price: ", price)
-    file = request.files["photo_url"]
+    # file = request.files["photo_url"]
+    file = "https://fc-hosted-content.s3.us-west-2.amazonaws.com/share-bnb/House1.jpg"
     print("file: ", file)    
 
     data = {
