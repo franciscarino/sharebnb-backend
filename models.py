@@ -164,6 +164,7 @@ class Listing(db.Model):
         """
 
         filename = secure_filename(file.filename)
+        # filename = "TEST_FILE_NAME"
 
         s3 = boto3.client(
             "s3",
@@ -174,7 +175,7 @@ class Listing(db.Model):
         s3.upload_fileobj(
             file,
             os.getenv("AWS_BUCKET_NAME"),
-            file.filename,
+            filename,
             ExtraArgs={"ACL": "public-read"}
         )
 
