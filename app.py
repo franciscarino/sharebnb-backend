@@ -157,8 +157,8 @@ def create_listing():
     description = request.json["description"]
     location = request.json["location"]
     price = request.json["price"]
-    # file = request.files["photo_url"]
-    file = "https://fc-hosted-content.s3.us-west-2.amazonaws.com/share-bnb/House1.jpg"
+    file = request.files["photo_url"]
+    # file = "https://fc-hosted-content.s3.us-west-2.amazonaws.com/share-bnb/House1.jpg"
     print("file: ", file)    
 
     data = {
@@ -168,8 +168,6 @@ def create_listing():
         "price": price,
         "created_by": user.username,
     }
-    
-    print("DATA: ", data)
 
     listing = Listing.create(data, file, username)
     db.session.commit()
