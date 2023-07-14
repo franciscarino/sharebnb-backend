@@ -85,7 +85,7 @@ def login():
 
 
 @app.route('/api/users/<username>', methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_user(username):
     """Return user object as json."""
 
@@ -96,7 +96,7 @@ def get_user(username):
 
 
 @app.route('/api/users/<username>/reservations', methods=["GET"])
-# @jwt_required()
+@jwt_required()
 def get_user_reservations(username):
     """Returns a user's reservations as JSON"""
 
